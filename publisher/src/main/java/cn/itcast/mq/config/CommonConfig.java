@@ -21,12 +21,9 @@ public class CommonConfig implements ApplicationContextAware {
         // 获取RabbitTemplate对象
         RabbitTemplate rabbit = applicationContext.getBean(RabbitTemplate.class);
         // 配置returnCallback
-        rabbit.setReturnCallback(new RabbitTemplate.ReturnCallback() {
-            @Override
-            public void returnedMessage(Message message, int i, String s, String s1, String s2) {
-                log.error("消息队列发送失败, 响应码{}, 失败原因{}, 交换机{}, 路由{}, 消息{}", i, s, s1, s2, message.toString());
-                // 消息的重发，或者通知管理员
-            }
+        rabbit.setReturnCallback((message, i, s, s1, s2) -> {
+            log.error("消息队列发送失败, 响应码{}, 失败原因{}, 交换机{}, 路由{}, 消息{}", i, s, s1, s2, message.toString());
+            // 消息的重发，或者通知管理员
         });
 
     }
