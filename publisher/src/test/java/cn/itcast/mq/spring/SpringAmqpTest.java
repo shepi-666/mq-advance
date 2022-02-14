@@ -83,4 +83,16 @@ public class SpringAmqpTest {
         rabbitTemplate.convertAndSend("delay.direct", "delay", mess);
         log.info("消息已经成功发送");
     }
+
+    @Test
+    public void testLazyMessage() {
+        for (int i = 0; i < 100000; i++) {
+            // 准备消息
+            Message mess = MessageBuilder.withBody("hello, lazy message".getBytes(StandardCharsets.UTF_8))
+                    .setDeliveryMode(MessageDeliveryMode.NON_PERSISTENT)
+                    .build();
+            // 发送消息
+            rabbitTemplate.convertAndSend("lazy.queue", mess);
+        }
+    }
 }
