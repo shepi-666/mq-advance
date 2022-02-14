@@ -3,6 +3,9 @@ package cn.itcast.mq.spring;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -13,6 +16,7 @@ import org.springframework.util.concurrent.FailureCallback;
 import org.springframework.util.concurrent.SuccessCallback;
 
 import javax.annotation.Resource;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Slf4j
@@ -44,5 +48,15 @@ public class SpringAmqpTest {
         });
 
         rabbitTemplate.convertAndSend("amq.topic", routingKey, message, correlationData);
+    }
+
+    @Test
+    public void testDurableMessage() {
+        // 准备消息
+        Message mess = MessageBuilder.withBody("hello, world".getBytes(StandardCharsets.UTF_8))
+                .setDeliveryMode(MessageDeliveryMode.PERSISTENT)
+                .build();
+        // 发送消息
+        rabbitTemplate.convertAndSend("simple.queue", mess);
     }
 }
